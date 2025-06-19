@@ -14,7 +14,7 @@ export default function UploadCsv() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [role, setRole] = useState<string | null>(null);
+  // const [role, setRole] = useState<string | null>(null);
   const [checkingAccess, setCheckingAccess] = useState(true);
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
@@ -23,7 +23,6 @@ export default function UploadCsv() {
     if (storedRole !== 'master') {
       router.replace('/dashboard');
     } else {
-      setRole(storedRole);
       setCheckingAccess(false);
     }
   }, [router]);
