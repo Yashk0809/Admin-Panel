@@ -17,5 +17,12 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/dashboard'], // protect dashboard and subroutes
+  matcher: [
+    '/dashboard/:path*',
+    '/dashboard',
+    '/upload-csv',
+    '/upload-csv/:path*',
+    '/add',
+    '/add/:path*',
+  ],
 };
