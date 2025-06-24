@@ -2,6 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import api from '../utils/api'
 import { LayoutDashboard, Upload, Plus, LogOut, User } from 'lucide-react';
 
 interface SidebarProps {
@@ -22,10 +23,16 @@ export default function Sidebar({ role, username, isOpen, onToggle, onClose }: S
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.clear();
-    onClose(); // Close sidebar immediately
-    router.push('/login');
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+  
+      localStorage.clear();     // 🧹 Clear client-side storage
+      onClose();                // 📦 Close sidebar
+      router.push('/login');    // 🔁 Redirect
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   const handleNavClick = () => {

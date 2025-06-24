@@ -7,14 +7,20 @@ import productRoutes from './routes/productRoutes';
 import categoryRoutes from './routes/categoryRoutes';
 import inventoryRoutes from './routes/inventoryRoutes';
 import uploadRoutes from './routes/uploadRoutes';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+const corsOptions = {
+  origin: 'http://localhost:3000', // ✅ only allow your frontend
+  credentials: true,              // ✅ allow cookies to be sent
+};
 
+app.use(cookieParser());
+app.use(cors(corsOptions));
+app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);

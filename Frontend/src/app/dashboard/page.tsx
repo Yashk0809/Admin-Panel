@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../../../components/Layout';
 import api from '../../../utils/api';
 import { useRouter } from 'next/navigation';
+import { cookies } from 'next/headers'
+import Cookies from 'js-cookie';
 import {
   Package,
   TrendingUp,
@@ -33,8 +35,10 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return router.push('/login');
+    // const token = Cookies.get('token');
+    // if (!token) {
+    //   router.replace('/login');
+    // }
 
     setUsername(localStorage.getItem('username'));
     setRole(localStorage.getItem('role'));
@@ -52,9 +56,15 @@ export default function Dashboard() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.clear();
-    router.push('/login');
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+  
+      localStorage.clear();     // 🧹 Clear client-side storage               // 📦 Close sidebar
+      router.push('/login');    // 🔁 Redirect
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   const handleUploadCSV = () => router.push('/upload-csv');

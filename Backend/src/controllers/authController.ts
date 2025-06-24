@@ -34,9 +34,25 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: '8h' });
+    res.cookie('token', token, {
+      httpOnly: true,       // ✅ prevents JS access (safer)
+      secure: true,     // ✅ only over HTTPS
+      sameSite: 'strict',   // ✅ protects against CSRF
+      path: '/',
+      maxAge: 8 * 60 * 60 * 1000, // 8 hours
+    })
     return res.status(200).json({ token, role: user.role, username: user.username });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server Error' });
   }
+};
+
+export const logout = async (req: Request, res: Response) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',        
+    sameSite: 'lax',
+  });
+  return res.status(200).json({ message: 'Logged out successfully' });
 };
