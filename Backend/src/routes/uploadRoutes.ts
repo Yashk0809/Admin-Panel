@@ -49,7 +49,7 @@ router.post(
 
     const readStream = fs.createReadStream(req.file.path).pipe(csv());
     readStream.on('data', (data) => results.push(data));
-    await finished(readStream); // ✅ Wait for stream to finish
+    await finished(readStream); // Wait for stream to finish
 
     try {
       for (const row of results) {
@@ -59,7 +59,7 @@ router.post(
         const available = parseInt(row['Available Units']);
 
         if (!categoryName || !productName || isNaN(price) || isNaN(available)) {
-          console.warn('⚠️ Skipping invalid row:', row);
+          console.warn('Skipping invalid row:', row);
           continue;
         }
 
@@ -112,7 +112,7 @@ router.post(
       return res.status(200).json({ message: 'CSV uploaded and processed successfully' });
 
     } catch (err) {
-      console.error('❌ CSV processing error:', err);
+      console.error(' CSV processing error:', err);
       if (req.file?.path) fs.unlinkSync(req.file.path);
       return res.status(500).json({ message: 'Failed to process CSV' });
     }

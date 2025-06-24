@@ -59,7 +59,7 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
     const userId = req.user?._id;
     const role = req.user?.role;
     const filter = role === 'master' ? { createdBy: userId } : {};
-    const products = await Product.find(filter) // ✅ only their own
+    const products = await Product.find(filter) //  only their own
       .populate('categories', 'name description')
       .populate('inventory');
 

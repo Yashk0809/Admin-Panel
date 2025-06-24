@@ -11,14 +11,14 @@ import catchAsync from '../utils/catchAsync';
 
 const router = Router();
 
-// ✅ Wrap async middleware
+//  Wrap async middleware
 const auth = wrapMiddleware(authenticate);
 
-// ✅ Use authorize as-is (already typed correctly)
+//  Use authorize as-is (already typed correctly)
 const permitMaster = authorize(['master']);
 const permitBoth = authorize(['master', 'admin']);
 
-// ✅ Wrap controllers with catchAsync
+//  Wrap controllers with catchAsync
 router.get('/', auth, permitBoth, catchAsync(getProducts));
 router.post('/', auth, permitMaster, catchAsync(createProduct));
 router.put('/:id', auth, permitMaster, catchAsync(updateProduct));
