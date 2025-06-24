@@ -200,11 +200,11 @@ export default function Dashboard() {
                   <td className="px-6 py-4 text-sm text-gray-900">${product.price.toFixed(2)}</td>
                   <td className="px-6 py-4 text-sm">
                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      product.stock < 20 ? 'bg-red-100 text-red-800' :
-                      product.stock < 50 ? 'bg-yellow-100 text-yellow-800' :
+                      (product.inventory?.available ?? 0) < 20 ? 'bg-red-100 text-red-800' :
+                      (product.inventory?.available ?? 0) < 50 ? 'bg-yellow-100 text-yellow-800' :
                       'bg-green-100 text-green-800'
                     }`}>
-                      {product.stock} units
+                      {product.inventory?.available ?? 0} units
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm">

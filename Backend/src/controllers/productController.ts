@@ -58,17 +58,91 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user?._id;
     const role = req.user?.role;
-    const filter = role === 'master' ? { createdBy: userId } : {};
-    const products = await Product.find(filter) //  only their own
-      .populate('categories', 'name description')
-      .populate('inventory');
 
+    const categoryIds = req.query.categoryIds
+      ? (req.query.categoryIds as string).split(',').map(id => new Types.ObjectId(id))
+      : [];
+
+    const minAvailable = req.query.minAvailable ? Number(req.query.minAvailable) : null;
+    const highAvailableOnly = req.query.highAvailableOnly === 'true';
+
+    // Base match for user's products (only needed for masters)
+    const baseMatch: any = {};
+    if (role === 'master') baseMatch.createdBy = userId;
+
+    let pipeline: any[] = [];
+
+    if (highAvailableOnly) {
+      // Separate pipeline just for products with stock > 100 (ignores category filter)
+      pipeline = [
+        { $match: baseMatch },
+        {
+          $lookup: {
+            from: 'inventories',
+            localField: 'inventory',
+            foreignField: '_id',
+            as: 'inventory'
+          }
+        },
+        { $unwind: '$inventory' },
+        {
+          $match: {
+            'inventory.available': { $gte: 100 }
+          }
+        },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'categories',
+            foreignField: '_id',
+            as: 'categories'
+          }
+        }
+      ];
+    } else {
+      // Default pipeline (category + optional stock filtering)
+      const match: any = { ...baseMatch };
+      if (categoryIds.length > 0) match.categories = { $all: categoryIds };
+
+      pipeline = [
+        { $match: match },
+        {
+          $lookup: {
+            from: 'inventories',
+            localField: 'inventory',
+            foreignField: '_id',
+            as: 'inventory'
+          }
+        },
+        { $unwind: '$inventory' }
+      ];
+
+      if (minAvailable !== null) {
+        pipeline.push({
+          $match: {
+            'inventory.available': { $gte: minAvailable }
+          }
+        });
+      }
+
+      pipeline.push({
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories'
+        }
+      });
+    }
+
+    const products = await Product.aggregate(pipeline);
     return res.status(200).json(products);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server Error' });
   }
 };
+
 
 export const updateProduct = async (req: AuthRequest, res: Response) => {
   try {
