@@ -41,7 +41,7 @@ export const login = async (req: Request, res: Response) => {
       path: '/',
       maxAge: 8 * 60 * 60 * 1000, // 8 hours
     })
-    return res.status(200).json({ token, role: user.role, username: user.username });
+    return res.status(200).json({role: user.role, username: user.username });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server Error' });
