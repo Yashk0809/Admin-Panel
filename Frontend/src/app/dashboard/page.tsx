@@ -33,6 +33,7 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showHighStockOnly, setShowHighStockOnly] = useState(false);
 
   useEffect(() => {
     // const token = Cookies.get('token');
@@ -45,9 +46,31 @@ export default function Dashboard() {
     fetchProducts();
   }, []);
 
+  // const fetchProducts = async () => {
+  //   try {
+  //     const res = await api.get('/products');
+  //     setProducts(res.data);
+  //     setLoading(false);
+  //   } catch {
+  //     setLoading(false);
+  //     alert('Error fetching products');
+  //   }
+  // };
+
   const fetchProducts = async () => {
     try {
-      const res = await api.get('/products');
+      const query: any = {};
+      if (selectedCategory) {
+        const matchingCategory = products
+          .flatMap(p => p.categories)
+          .find(c => c.name === selectedCategory);
+        if (matchingCategory) query.categoryIds = matchingCategory._id;
+      }
+  
+      if (showHighStockOnly) query.highAvailableOnly = true;
+  
+      const queryString = new URLSearchParams(query).toString();
+      const res = await api.get(`/products?${queryString}`);
       setProducts(res.data);
       setLoading(false);
     } catch {
@@ -55,6 +78,10 @@ export default function Dashboard() {
       alert('Error fetching products');
     }
   };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [selectedCategory, showHighStockOnly]);
 
   const handleLogout = async () => {
     try {
@@ -170,6 +197,19 @@ export default function Dashboard() {
             </select>
           </div>
         </div>
+      </div>
+
+      <div className="flex items-center gap-2 mt-4">
+        <input
+          type="checkbox"
+          id="highStock"
+          checked={showHighStockOnly}
+          onChange={e => setShowHighStockOnly(e.target.checked)}
+          className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+        />
+        <label htmlFor="highStock" className="text-gray-700 text-sm">
+          Show only products with available stock ≥ 100
+        </label>
       </div>
 
       {/* Table */}
