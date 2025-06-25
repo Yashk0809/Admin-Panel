@@ -35,12 +35,13 @@ export const login = async (req: Request, res: Response) => {
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: '8h' });
     res.cookie('token', token, {
-      httpOnly: true,       // ✅ prevents JS access (safer)
-      secure: true,     // ✅ only over HTTPS
-      sameSite: 'none',   // ✅ protects against CSRF
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
       path: '/',
-      maxAge: 8 * 60 * 60 * 1000, // 8 hours
-    })
+      domain: '.vercel.app', // Use the root domain to share across subdomains
+      maxAge: 8 * 60 * 60 * 1000,
+    });
     return res.status(200).json({role: user.role, username: user.username });
   } catch (error) {
     console.error(error);
