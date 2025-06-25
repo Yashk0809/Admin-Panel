@@ -81,7 +81,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedCategory, showHighStockOnly]);
+  }, [selectedCategories, showHighStockOnly]);
 
   useEffect(() => {
     api.get('/categories').then(res => setCategories(res.data));
