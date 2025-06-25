@@ -102,8 +102,8 @@ export default function Dashboard() {
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (selectedCategory === '' ||
-      product.categories.some(c => c.name === selectedCategory))
+    (selectedCategory === '' || product.categories.some(c => c.name === selectedCategory)) &&
+    (!showHighStockOnly || (product.inventory?.available ?? 0) >= 100)
   );
 
   const totalProducts = products.length;
