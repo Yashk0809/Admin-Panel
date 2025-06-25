@@ -34,6 +34,7 @@ export default function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const [showHighStockOnly, setShowHighStockOnly] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
     // const token = Cookies.get('token');
@@ -102,9 +103,11 @@ export default function Dashboard() {
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (selectedCategory === '' || product.categories.some(c => c.name === selectedCategory)) &&
-    (!showHighStockOnly || (product.inventory?.available ?? 0) >= 100)
+    (selectedCategory === '' ||
+      product.categories.some(c => c.name === selectedCategory))
   );
+
+
 
   const totalProducts = products.length;
   const totalValue = products.reduce((acc, p) => acc + p.price * p.stock, 0);
@@ -199,6 +202,25 @@ export default function Dashboard() {
         </div>
       </div>
 
+      <div className="sm:w-64 relative">
+      <Filter className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+      
+      <select
+      title="Filter by categories"
+        multiple
+        value={selectedCategories}
+        onChange={e =>
+          setSelectedCategories(Array.from(e.target.selectedOptions, option => option.value))
+        }
+        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl appearance-none bg-white h-40"
+      >
+        {allCategories.map(c => (
+          <option key={c} value={c}>{c}</option>
+        ))}
+      </select>
+    </div>
+
+      {/*  HighStock check box */}
       <div className="flex items-center gap-2 mt-4">
         <input
           type="checkbox"
