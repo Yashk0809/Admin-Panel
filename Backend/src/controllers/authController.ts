@@ -39,7 +39,6 @@ export const login = async (req: Request, res: Response) => {
       secure: true,
       sameSite: 'none',
       path: '/',
-      domain: '.vercel.app', // Use the root domain to share across subdomains
       maxAge: 8 * 60 * 60 * 1000,
     });
     return res.status(200).json({role: user.role, username: user.username });
