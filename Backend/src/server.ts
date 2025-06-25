@@ -14,9 +14,8 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  'https://admin-panel-frontend-git-main-yashk0809s-projects.vercel.app',
-  'http://localhost:3000',
-  'https://admin-panel-frontend-navy.vercel.app', // ← include production clean URL too
+  'https://admin-panel-frontend-epik.onrender.com',
+  'http://localhost:3000', // ← include production clean URL too
 ];
 
 const corsOptions = {
