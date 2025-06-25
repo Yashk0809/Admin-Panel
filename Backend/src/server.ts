@@ -16,14 +16,15 @@ const app = express();
 const allowedOrigins = [
   'https://admin-panel-frontend-git-main-yashk0809s-projects.vercel.app',
   'http://localhost:3000',
-  // add other preview URLs as needed
+  'https://admin-panel-frontend-navy.vercel.app', // ← include production clean URL too
 ];
 
 const corsOptions = {
-  origin: (origin:any, callback:any) => {
+  origin: function (origin:any, callback:any) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.log('Blocked CORS origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
