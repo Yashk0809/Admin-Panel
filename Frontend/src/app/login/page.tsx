@@ -23,6 +23,7 @@ export default function LoginPage() {
     try {
       setError('');
       const res = await api.post('/auth/login', data);
+      router.push('/dashboard');
       localStorage.setItem('role', res.data.role);
       localStorage.setItem('username', res.data.username);
       router.push('/dashboard');
