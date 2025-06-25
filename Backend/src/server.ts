@@ -13,10 +13,20 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  'https://admin-panel-frontend-git-main-yashk0809s-projects.vercel.app',
+  'http://localhost:3000',
+  // add other preview URLs as needed
+];
+
 const corsOptions = {
-  origin: [
-    process.env.FRONTEND_URL || 'http://localhost:3000',
-  ],
+  origin: (origin:any, callback:any) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 };
 
