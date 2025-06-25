@@ -4,7 +4,8 @@ import Layout from '../../../components/Layout';
 import api from '../../../utils/api';
 import { useRouter } from 'next/navigation';
 import { cookies } from 'next/headers'
-import Cookies from 'js-cookie';
+import Select from 'react-select';
+
 import {
   Package,
   TrendingUp,
@@ -35,6 +36,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [showHighStockOnly, setShowHighStockOnly] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<{ _id: string; name: string }[]>([]);
+  
 
   useEffect(() => {
     // const token = Cookies.get('token');
@@ -61,13 +64,9 @@ export default function Dashboard() {
   const fetchProducts = async () => {
     try {
       const query: any = {};
-      if (selectedCategory) {
-        const matchingCategory = products
-          .flatMap(p => p.categories)
-          .find(c => c.name === selectedCategory);
-        if (matchingCategory) query.categoryIds = matchingCategory._id;
+      if (selectedCategories.length > 0) {
+        query.categoryIds = selectedCategories.join(',');
       }
-  
       if (showHighStockOnly) query.highAvailableOnly = true;
   
       const queryString = new URLSearchParams(query).toString();
@@ -83,6 +82,10 @@ export default function Dashboard() {
   useEffect(() => {
     fetchProducts();
   }, [selectedCategory, showHighStockOnly]);
+
+  useEffect(() => {
+    api.get('/categories').then(res => setCategories(res.data));
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -106,6 +109,11 @@ export default function Dashboard() {
     (selectedCategory === '' ||
       product.categories.some(c => c.name === selectedCategory))
   );
+
+  const categoryOptions = categories.map(c => ({
+    value: c._id,
+    label: c.name,
+  }));
 
 
 
@@ -205,19 +213,14 @@ export default function Dashboard() {
       <div className="sm:w-64 relative">
       <Filter className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
       
-      <select
-      title="Filter by categories"
-        multiple
-        value={selectedCategories}
-        onChange={e =>
-          setSelectedCategories(Array.from(e.target.selectedOptions, option => option.value))
-        }
-        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl appearance-none bg-white h-40"
-      >
-        {allCategories.map(c => (
-          <option key={c} value={c}>{c}</option>
-        ))}
-      </select>
+      <Select
+  isMulti
+  options={categoryOptions}
+  value={categoryOptions.filter(option => selectedCategories.includes(option.value))}
+  onChange={selected => setSelectedCategories(selected.map(option => option.value))}
+  placeholder="Select categories..."
+  className="mb-4"
+/>
     </div>
 
       {/*  HighStock check box */}
