@@ -38,7 +38,7 @@ export const login = async (req: Request, res: Response) => {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
-      domain: '.onrender.com',
+      domain: '.yash-admin-0823842.fwh.is',
       path: '/',
       maxAge: 8 * 60 * 60 * 1000,
     });

@@ -14,7 +14,7 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  'https://admin-panel-frontend-epik.onrender.com',
+  'https://frontend.yash-admin-0823842.fwh.is',
   'http://localhost:3000', // ← include production clean URL too
 ];
 
