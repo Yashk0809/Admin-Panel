@@ -16,5 +16,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard', '/add', '/upload-csv'],
+  matcher: ['/dashboard', '/add', '/upload-csv', '/dashboard/:path*']
 }
